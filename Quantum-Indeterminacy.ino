@@ -25,6 +25,16 @@ void loop() {
   lowThreshold = map(analogRead(A2), 0, 1023, 0, 1023 * 0.1);
   highThreshold = map(analogRead(A3), 0, 1023, 0, 1023 * 0.1);
   sharpRiseTimeThreshold = map(analogRead(A4), 0, 1023, 0, 1023 * 0.1);
+  Serial.print("signalValue: ");
+  Serial.print(signalValue);
+  Serial.print(" signalStartThreshold: ");
+  Serial.print(signalStartThreshold);
+  Serial.print(" lowThreshold: ");
+  Serial.print(lowThreshold);
+  Serial.print(" highThreshold: ");
+  Serial.print(highThreshold);
+  Serial.print(" sharpRiseTimeThreshold: ");
+  Serial.println(sharpRiseTimeThreshold);
   // Start measuring rise time only when the signal first rises above a small threshold
   if (signalValue >= signalStartThreshold && !signalDetected) {
     signalDetected = true;  // Signal has started
