@@ -32,7 +32,7 @@ void loop() {
   if (signalDetected) {
 
     // Check if signal is rising past 10% threshold
-    if (signalValue >= lowThreshold && !rising) {
+    if (signalValue >= lowThreshold && signalValue <= highThreshold && !rising) {
       startTime = micros();  // Start timer at 10% threshold
       rising = true;
     }
