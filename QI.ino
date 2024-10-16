@@ -1,5 +1,5 @@
-const int sampleRate = 100; // Sample rate in Hz
-const int delayTime = 250;     // Delay time in milliseconds
+const int sampleRate = 40; // Sample rate in Hz
+const int delayTime = 700;     // Delay time in milliseconds
 
 // Calculate maximum delay samples, ensuring it's an integer
 const int maxDelaySamples = (delayTime * sampleRate) / 1000; // Maximum delay in samples
@@ -33,7 +33,7 @@ void loop() {
   } else {
     digitalWrite(outputPin, HIGH); // Output HIGH if audioOut is below the threshold
   }
-
+ Serial.println(audioOut);
   // Update the write index
   writeIndex = (writeIndex + 1) % maxDelaySamples;
 
