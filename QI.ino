@@ -1,59 +1,49 @@
-const int sampleRatePotPin = A1;  // Pin for sample rate potentiometer
-const int delayTimePotPin = A2;    // Pin for delay time potentiometer
-const int minSampleRate = 10;      // Minimum sample rate in Hz
-const int maxSampleRate = 100;     // Maximum sample rate in Hz
-const int minDelayTime = 100;      // Minimum delay time in milliseconds
-const int maxDelayTime = 500;     // Maximum delay time in milliseconds
+const int sampleRatePin = A0;  // Potentiometer for sample rate
+const int delayTimePin = A1;    // Potentiometer for delay time
 
-int audioBuffer[500]; // Buffer for delay line (max buffer size for safety)
-int writeIndex = 0;    // Write index for audio buffer
-const int threshold = 512; // Threshold for output inversion
-const int outputPin = 9;   // Output pin
+float delayLine[300];          // Maximum delay line size
+int writeIndex = 0;              // Write index for delay line
+int maxDelaySamples = 100;     // Max delay samples
+int sampleRate = 50;          // Default sample rate
+int delayTime = 1;             // Default delay time in milliseconds
 
 void setup() {
   Serial.begin(9600);
-  pinMode(outputPin, OUTPUT); // Set pin as output
 }
 
 void loop() {
-  // Read potentiometer values
-  int potSampleRate = analogRead(sampleRatePotPin);
-  int potDelayTime = analogRead(delayTimePotPin);
+  // Read values from potentiometers
+  sampleRate = map(analogRead(sampleRatePin), 0, 1023, 1, sampleRate); // 1 kHz to 44.1 kHz
+  delayTime = map(analogRead(delayTimePin), 0, 1023, 1, delayTime);     // 100 ms to 1000 ms
 
-  // Map potentiometer values to desired ranges
-  int sampleRate = map(potSampleRate, 0, 1023, minSampleRate, maxSampleRate);
-  int delayTime = map(potDelayTime, 0, 1023, minDelayTime, maxDelayTime);
+  // Update the maxDelaySamples based on the delay time
+  maxDelaySamples = (sampleRate * delayTime) / 1000;
+  
+  // Read from analog input (for example, a second potentiometer or sensor)
+  int input = analogRead(A2);
+  
+  // Convert input to a float value (0-1)
+  float inputValue = input / 1023.0;
 
-  // Calculate maximum delay samples based on delayTime and sampleRate
-  const int maxDelaySamples = (delayTime * sampleRate) / 1000; // Maximum delay in samples
+  // Get the delayed value
+  float delayedValue = delayLine[writeIndex];
 
-  // Store the audio sample in the delay buffer
-  int audioIn = analogRead(A0); // Assume analog input on pin A0
-  audioBuffer[writeIndex] = audioIn;
+  // Output the delayed value to analog output (PWM)
+  analogWrite(9, delayedValue * 255); // Assuming you're using pin 9 for output
 
-  // Calculate the read index for the delayed sample
-  int readIndex = (writeIndex + 1) % maxDelaySamples; // Wrap around the buffer
+  // Store the new sample in the delay line
+  delayLine[writeIndex] = inputValue;
 
-  // Get the delayed audio sample
-  int audioOut = audioBuffer[readIndex];
+  // Increment and wrap the write index
+  writeIndex = (writeIndex + 1) % maxDelaySamples;
 
-  // Invert the output based on the threshold
-  if (audioOut > threshold) {
-    digitalWrite(outputPin, LOW); // Output LOW if audioOut is above the threshold
-  } else {
-    digitalWrite(outputPin, HIGH); // Output HIGH if audioOut is below the threshold
-  }
-
-  // Print delayTime and sampleRate
+  // Print sample rate and delay time to Serial Monitor
   Serial.print("Sample Rate: ");
   Serial.print(sampleRate);
   Serial.print(" Hz, Delay Time: ");
   Serial.print(delayTime);
   Serial.println(" ms");
 
-  // Update the write index
-  writeIndex = (writeIndex + 1) % maxDelaySamples;
-
-  // A small delay to maintain sample rate
+  // Small delay to match the sample rate
   delayMicroseconds(1000000 / sampleRate);
 }
