@@ -13,8 +13,8 @@ void setup() {
 
 void loop() {
   // Read values from potentiometers
-  sampleRate = map(analogRead(sampleRatePin), 0, 1023, 1, sampleRate); // 1 kHz to 44.1 kHz
-  delayTime = map(analogRead(delayTimePin), 0, 1023, 1, delayTime);     // 100 ms to 1000 ms
+  sampleRate = map(analogRead(sampleRatePin), 0, 1023, 1, 100); // 1 kHz to 44.1 kHz
+  delayTime = map(analogRead(delayTimePin), 0, 1023, 1, 100);     // 100 ms to 1000 ms
 
   // Update the maxDelaySamples based on the delay time
   maxDelaySamples = (sampleRate * delayTime) / 1000;
