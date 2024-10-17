@@ -1,13 +1,14 @@
-const int sampleRate = 40; // Sample rate in Hz
-const int delayTime = 700;     // Delay time in milliseconds
+const int sampleRatePotPin = A1;  // Pin for sample rate potentiometer
+const int delayTimePotPin = A2;    // Pin for delay time potentiometer
+const int minSampleRate = 10;      // Minimum sample rate in Hz
+const int maxSampleRate = 100;     // Maximum sample rate in Hz
+const int minDelayTime = 100;      // Minimum delay time in milliseconds
+const int maxDelayTime = 500;     // Maximum delay time in milliseconds
 
-// Calculate maximum delay samples, ensuring it's an integer
-const int maxDelaySamples = (delayTime * sampleRate) / 1000; // Maximum delay in samples
-
-int audioBuffer[maxDelaySamples]; // Buffer for delay line
-int writeIndex = 0;                // Write index for audio buffer
-const int threshold = 512;         // Threshold for output inversion
-const int outputPin = 9;           // Output pin
+int audioBuffer[500]; // Buffer for delay line (max buffer size for safety)
+int writeIndex = 0;    // Write index for audio buffer
+const int threshold = 512; // Threshold for output inversion
+const int outputPin = 9;   // Output pin
 
 void setup() {
   Serial.begin(9600);
@@ -15,10 +16,19 @@ void setup() {
 }
 
 void loop() {
-  // Read audio input
-  int audioIn = analogRead(A0); // Assume analog input on pin A0
+  // Read potentiometer values
+  int potSampleRate = analogRead(sampleRatePotPin);
+  int potDelayTime = analogRead(delayTimePotPin);
+
+  // Map potentiometer values to desired ranges
+  int sampleRate = map(potSampleRate, 0, 1023, minSampleRate, maxSampleRate);
+  int delayTime = map(potDelayTime, 0, 1023, minDelayTime, maxDelayTime);
+
+  // Calculate maximum delay samples based on delayTime and sampleRate
+  const int maxDelaySamples = (delayTime * sampleRate) / 1000; // Maximum delay in samples
 
   // Store the audio sample in the delay buffer
+  int audioIn = analogRead(A0); // Assume analog input on pin A0
   audioBuffer[writeIndex] = audioIn;
 
   // Calculate the read index for the delayed sample
@@ -33,7 +43,14 @@ void loop() {
   } else {
     digitalWrite(outputPin, HIGH); // Output HIGH if audioOut is below the threshold
   }
- Serial.println(audioOut);
+
+  // Print delayTime and sampleRate
+  Serial.print("Sample Rate: ");
+  Serial.print(sampleRate);
+  Serial.print(" Hz, Delay Time: ");
+  Serial.print(delayTime);
+  Serial.println(" ms");
+
   // Update the write index
   writeIndex = (writeIndex + 1) % maxDelaySamples;
 
