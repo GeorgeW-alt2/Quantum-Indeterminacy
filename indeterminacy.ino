@@ -30,28 +30,35 @@ void loop() {
 
   // Check conditions for inverter signal
   if (delayedValue > time && analogValue > time) {
+    digitalWrite(inverterPin, HIGH); // Inverted signal HIGH
+
     if (steps > 2 && steps < 5){
     Serial.print(" HIGH ");
-
+    Serial.print("Steps taken: ");
+    Serial.print(steps);
+      
+    // Print the original and delayed values
+    Serial.print(" Analog Value: ");
+    Serial.print(analogValue);
+    Serial.print(" - Delayed Value: ");
+    Serial.print(delayedValue);
+    Serial.print(" - Inverted Signal: ");
+    Serial.println(digitalRead(inverterPin));
     }
     if (steps > 0 && steps < 3){
     Serial.print(" LOW ");
-
-    }
-    digitalWrite(inverterPin, HIGH); // Inverted signal HIGH
     Serial.print("Steps taken: ");
     Serial.print(steps);
-    
+      
+    // Print the original and delayed values
+    Serial.print(" Analog Value: ");
+    Serial.print(analogValue);
+    Serial.print(" - Delayed Value: ");
+    Serial.print(delayedValue);
+    Serial.print(" - Inverted Signal: ");
+    Serial.println(digitalRead(inverterPin));
+    }
 
-  
-    
-  // Print the original and delayed values
-  Serial.print(" Analog Value: ");
-  Serial.print(analogValue);
-  Serial.print(" - Delayed Value: ");
-  Serial.print(delayedValue);
-  Serial.print(" - Inverted Signal: ");
-  Serial.println(digitalRead(inverterPin));
     steps = 0; // Reset steps after printing
   } else {
     digitalWrite(inverterPin, LOW);  // Inverted signal LOW
