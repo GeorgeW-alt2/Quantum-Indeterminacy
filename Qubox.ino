@@ -10,6 +10,7 @@ int noteDurations[] = {
   4, 8, 8, 4, 4, 4, 4, 4
 };
 
+const int checkPin = 10;
 const int delayTimePin = A4;    // Potentiometer for delay time
 const int LDR = A0;
 const int delayedOutputPin = A3;
@@ -20,15 +21,15 @@ const int powerPin = 12;     // Digital output pin for inverter
 float delayLine[300];          // Maximum delay line size
 int writeIndex = 0;              // Write index for delay line
 int maxDelaySamples = 100;     // Max delay samples
-int sampleRate = 50;          // Default sample rate
+int sampleRate = 100;          // Default sample rate
 int delayTime = 1;             // Default delay time in milliseconds
 int value = 15;
-int count = 0;
 
 void setup() {
   Serial.begin(9600);
   pinMode(powerPin, OUTPUT); // Set power pin as output
   pinMode(buzzerPin, OUTPUT); // Set buzzer pin as output
+  pinMode(checkPin, OUTPUT); // Set buzzer pin as output
   pinMode(LDR, OUTPUT); // Set buzzer pin as output
 
   digitalWrite(powerPin,HIGH );
@@ -62,16 +63,14 @@ void loop() {
   writeIndex = (writeIndex + 1) % maxDelaySamples;
 
   // Print sample rate and delay time to Serial Monitor
-
-  // Invert the signal (logic high if analog value is low and vice versa)
-  if (delayedValue < value && input > value) {
-    tone(buzzerPin, melody[0], 100);
-
-  } else if ( count > 10){
+  if (delayedValue > value) {
    noTone(buzzerPin);
-
+    digitalWrite(checkPin,HIGH );
   }
-  count++;
+  if ( input > value && delayedValue < value) {
+  tone(buzzerPin, melody[0], 10);
+  digitalWrite(checkPin,LOW );
+  }
   // Print the original and inverted values
   Serial.print("Input Value: ");
   Serial.print(input);
@@ -87,7 +86,5 @@ void loop() {
   Serial.print(" Hz, Delay Time: ");
   Serial.print(delayTime);
   Serial.println(" ms");
-
-  // Small delay to match the sample rate
-  delayMicroseconds(1000000 / sampleRate);
+  delay(1);
 }
