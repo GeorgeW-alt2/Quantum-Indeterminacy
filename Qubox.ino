@@ -65,17 +65,17 @@ void loop() {
   // Print sample rate and delay time to Serial Monitor
   if (delayedValue > value) {
    noTone(buzzerPin);
-    digitalWrite(checkPin,HIGH );
+    digitalWrite(checkPin,LOW );
   }
   if ( input > value && delayedValue < value) {
   tone(buzzerPin, melody[0], 10);
-  digitalWrite(checkPin,LOW );
+  digitalWrite(checkPin,HIGH );
   }
   // Print the original and inverted values
   Serial.print("Input Value: ");
   Serial.print(input);
   Serial.print(" - Buzzer Signal: ");
-  Serial.print(digitalRead(buzzerPin));
+  Serial.print(digitalRead(checkPin));
 
 
 
