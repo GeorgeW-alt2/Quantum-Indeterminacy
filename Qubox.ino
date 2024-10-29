@@ -18,7 +18,7 @@ const int buzzerPin = 9;     // Digital output pin for inverter
 
 const int powerPin = 12;     // Digital output pin for inverter
 
-float delayLine[300];          // Maximum delay line size
+float delayLine[200];          // Maximum delay line size
 int writeIndex = 0;              // Write index for delay line
 int maxDelaySamples = 100;     // Max delay samples
 int sampleRate = 100;          // Default sample rate
