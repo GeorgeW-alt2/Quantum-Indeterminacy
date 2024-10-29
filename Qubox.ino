@@ -20,8 +20,8 @@ const int powerPin = 12;     // Digital output pin for inverter
 
 float delayLine[200];          // Maximum delay line size
 int writeIndex = 0;              // Write index for delay line
-int maxDelaySamples = 100;     // Max delay samples
-int sampleRate = 100;          // Default sample rate
+int maxDelaySamples = 50;     // Max delay samples
+int sampleRate = 50;          // Default sample rate
 int delayTime = 1;             // Default delay time in milliseconds
 int value = 15;
 
@@ -67,7 +67,7 @@ void loop() {
    noTone(buzzerPin);
     digitalWrite(checkPin,LOW );
   }
-  if ( input > value && delayedValue < value && input != delayedValue) {
+  if ( input > value && delayedValue < value && input != delayedValue && delayedValue != 0 && input != 0) {
   tone(buzzerPin, melody[0], 10);
   digitalWrite(checkPin,HIGH );
   }
