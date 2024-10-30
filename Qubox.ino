@@ -67,7 +67,7 @@ void loop() {
    noTone(buzzerPin);
     digitalWrite(checkPin,LOW );
   }
-  if ( input > value && delayedValue < value && input != delayedValue && delayedValue != 0 && input != 0) {
+  if (input < delayedValue+5 && input > delayedValue-5 && input > value && delayedValue < value && input != delayedValue && delayedValue != 0 && input != 0) {
   tone(buzzerPin, melody[0], 10);
   digitalWrite(checkPin,HIGH );
   }
