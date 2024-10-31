@@ -25,6 +25,10 @@ int sampleRate = 50;          // Default sample rate
 int delayTime = 1;             // Default delay time in milliseconds
 int value = 15;
 
+unsigned long unequalStartTime = 0; // Start time for proper time duration
+unsigned long properTimeDuration = 0; // Measured proper time duration
+bool unequalActive = false;    // Track if unequal period is active
+
 void setup() {
   Serial.begin(9600);
   pinMode(powerPin, OUTPUT); // Set power pin as output
@@ -32,52 +36,55 @@ void setup() {
   pinMode(checkPin, OUTPUT); // Set buzzer pin as output
   pinMode(LDR, OUTPUT); // Set buzzer pin as output
 
-  digitalWrite(powerPin,HIGH );
-
-
+  digitalWrite(powerPin, HIGH);
 }
 
 void loop() {
   // Read values from potentiometers
-  delayTime = map(analogRead(delayTimePin), 0, 1023, 1, 100);     // 100 ms to 1000 ms
+  delayTime = map(analogRead(delayTimePin), 0, 1023, 1, 300);     // 1 ms to 100 ms
 
   // Update the maxDelaySamples based on the delay time
   maxDelaySamples = (sampleRate * delayTime) / 1000;
-  
-  // Read from analog input (for example, a second potentiometer or sensor)
+
+  // Read from analog input (e.g., LDR sensor)
   int input = analogRead(LDR);
-  
-  // Convert input to a float value (0-1)
-  float inputValue = input;
 
   // Get the delayed value
   float delayedValue = delayLine[writeIndex];
 
   // Output the delayed value to analog output (PWM)
-  analogWrite(delayedOutputPin, delayedValue); // Assuming you're using pin 9 for output
+  analogWrite(delayedOutputPin, delayedValue);
 
   // Store the new sample in the delay line
-  delayLine[writeIndex] = inputValue;
+  delayLine[writeIndex] = input;
 
   // Increment and wrap the write index
   writeIndex = (writeIndex + 1) % maxDelaySamples;
 
-  // Print sample rate and delay time to Serial Monitor
-  if (delayedValue > value) {
-   noTone(buzzerPin);
-    digitalWrite(checkPin,LOW );
+  // Check if input and delayed values are unequal
+  if (input > value && delayedValue < value && input != delayedValue && delayedValue != 0 && input != 0) {
+    if (input > delayedValue + 5 || input < delayedValue - 5) {
+      if (!unequalActive) { // If this is the start of an unequal period
+        unequalStartTime = millis();
+        unequalActive = true;
+      }
+      tone(buzzerPin, melody[0], 10);
+      digitalWrite(checkPin, HIGH);
+    }
+  } else {
+    if (unequalActive) { // If unequal period just ended
+      properTimeDuration = millis() - unequalStartTime;
+      unequalActive = false;
+    }
+    noTone(buzzerPin);
+    digitalWrite(checkPin, LOW);
   }
-  if (input < delayedValue+5 && input > delayedValue-5 && input > value && delayedValue < value && input != delayedValue && delayedValue != 0 && input != 0) {
-  tone(buzzerPin, melody[0], 10);
-  digitalWrite(checkPin,HIGH );
-  }
-  // Print the original and inverted values
+
+  // Print results to Serial Monitor
   Serial.print("Input Value: ");
   Serial.print(input);
   Serial.print(" - Buzzer Signal: ");
   Serial.print(digitalRead(checkPin));
-
-
 
   Serial.print(" Delayed Output: ");
   Serial.print(delayedValue);
@@ -85,6 +92,15 @@ void loop() {
   Serial.print(sampleRate);
   Serial.print(" Hz, Delay Time: ");
   Serial.print(delayTime);
-  Serial.println(" ms");
+  Serial.print(" ms");
+
+  // Display proper time duration when unequal period ends
+  if (!unequalActive && properTimeDuration > 0) {
+    Serial.print(" - Proper Time Duration: ");
+    Serial.print(properTimeDuration);
+    Serial.print(" ms");
+  }
+  
+  Serial.println();
   delay(1);
 }
