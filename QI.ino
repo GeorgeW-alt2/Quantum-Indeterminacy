@@ -79,9 +79,8 @@ void loop() {
     noTone(buzzerPin);
     digitalWrite(checkPin, LOW);
   }
-
-  // Print results to Serial Monitor
-  Serial.print("Input Value: ");
+ // Print results to Serial Monitor
+  Serial.print(" Input Value: ");
   Serial.print(input);
   Serial.print(" - Buzzer Signal: ");
   Serial.print(digitalRead(checkPin));
@@ -90,7 +89,7 @@ void loop() {
   Serial.print(delayedValue);
   Serial.print(" Sample Rate: ");
   Serial.print(sampleRate);
-  Serial.print(" Hz, Delay Time: ");
+  Serial.print(" Hz, Coordinate Time: ");
   Serial.print(delayTime);
   Serial.print(" ms");
 
