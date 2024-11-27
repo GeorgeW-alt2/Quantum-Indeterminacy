@@ -59,7 +59,7 @@ void loop() {
   delayLine[writeIndex] = input;
 
   // Increment and wrap the write index
-  writeIndex = (writeIndex + 1) % maxDelaySamples;
+  writeIndex = (writeIndex + 2) % maxDelaySamples;
 
   // Check if input and delayed values are unequal
   if (input > value && delayedValue < value && input != delayedValue && delayedValue != 0 && input != 0) {
