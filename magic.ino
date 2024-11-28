@@ -13,16 +13,15 @@ void loop() {
   // read the value from the sensor:
   sensorValue = analogRead(sensorPin);
 if (sensorValue > 0){
-Serial.print(n);
 
-Serial.println(": 1");
+Serial.print("1");
 
 }
 
 if (sensorValue == 0){
-Serial.print(n);
 
-Serial.println(": 0");
+
+Serial.print("0");
 
 }
 delay(1);

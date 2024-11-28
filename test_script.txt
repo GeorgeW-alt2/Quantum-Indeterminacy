@@ -1,0 +1,47 @@
+--Gamble 1/7th for 7x in 20min, do not multiply just alter chance for low balances
+-- Binary array to determine bet directions
+local binaryArray = {1,1,1,1,0,0,0,0,0,0,1,1,0,0,0,1,0,1,1,1,0,1,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,1}  -- Example binary number array
+local arrayIndex  = 1  -- Start at the first element of the array
+
+-- Betting configuration
+nextbet    = 0.00235511  -- Starting bet amount
+chance     = 43  -- Win chance
+bethigh    = true  -- Start with betting high
+basebet    = nextbet  -- Store the base bet for resetting after a win
+multiplier = 2  -- Multiplier for losses
+
+-- Advanced features
+enablezz = false  -- Enable high/low switching
+enablesrc = false  -- Enable stop/reset conditions
+
+-- Function to set betting direction based on binary array
+function updateBetDirection()
+    if binaryArray[arrayIndex] == 1 then
+        bethigh = true  -- Bet high
+    else
+        bethigh = false  -- Bet low
+    end
+
+    -- Move to the next binary digit
+    arrayIndex = arrayIndex + 1
+end
+
+-- Function to execute bets
+function dobet()
+    if arrayIndex > #binaryArray then
+        print("End of binary array reached. Stopping script.")
+        stop()  -- Stop the betting script
+        return
+    end
+
+    if win then
+        -- Reset bet amount to base after a win
+        nextbet = basebet
+    else
+        -- Multiply bet amount after a loss
+        nextbet = nextbet * 1
+    end
+
+    -- Update betting direction based on binary array
+    updateBetDirection()
+end
