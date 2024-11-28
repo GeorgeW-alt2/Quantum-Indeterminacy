@@ -25,6 +25,6 @@ Serial.print(n);
 Serial.println(": 0");
 
 }
-delay(5000);
+delay(1);
 n++;
 }
