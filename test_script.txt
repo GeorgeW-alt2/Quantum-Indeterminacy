@@ -1,4 +1,4 @@
---Gamble 1/7th for 7x in 20min, do not multiply just alter chance for low balances, the streak ceiling is currently measured at 11 using 4 glass diodes
+--Gamble 1.0% , do not multiply just alter chance for low balances, the streak ceiling is currently measured at 11 using 4 glass diodes
 -- Binary array to determine bet directions
 local binaryArray = {1,1,1,1,0,0,0,0,0,0,1,1,0,0,0,1,0,1,1,1,0,1,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,1}  -- Example binary number array
 local arrayIndex  = 1  -- Start at the first element of the array
